@@ -1,0 +1,61 @@
+---
+title: "MS211_PC1_RA204244"
+output: pdf_notebook
+---
+
+```{r Exercicio 1}
+a <- 0
+b <- 0.11
+for(i in 1:30000){
+  a <- a + b
+}
+print(a,digits = 20)
+```
+
+```{r Exercicio 2,Newton-Raphson}
+f <- function(x){
+  return(x^3-9*x+3)
+}
+
+df <- function(x){
+  return(3*x^2-9)
+}
+
+x <- 0.5
+e1 <- e2 <- 1 * 10^-4
+i <- 1
+
+newton <- function(x,e1,e2){
+  xk <- x - f(x)/df(x)
+  while(abs(f(xk))>=e1 & abs(xk-x)/abs(xk)>=e2){
+    i <- i + 1
+    x <- xk
+    xk <- x - f(x)/df(x)
+  }
+  resultado <- c(xk,f(xk),i)
+  return(resultado)
+}
+```
+
+```{r Exercicio 2,Secante}
+f <- function(x){
+  return(x^3-9*x+3)
+}
+
+x0 <-0
+x1 <-1
+e1 <- e2 <- 5 * 10^-4
+i <- 0
+
+secante <- function(x0,x1,e1,e2){
+  while(abs(f(x1))>=e1 & abs(x1-x0)/abs(x1)>=e2){
+    i <- i + 1
+    xt <- x1 - f(x1)*(x1-x0)/(f(x1) - f(x0))
+    x0 <- x1
+    x1 <- xt
+  }
+  resposta <- c(x1,f(x1),i)
+  return(resposta)
+}
+```
+
