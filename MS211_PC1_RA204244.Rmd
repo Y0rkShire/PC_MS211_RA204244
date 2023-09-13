@@ -3,6 +3,12 @@ title: "MS211_PC1_RA204244"
 output: pdf_notebook
 ---
 
+```{r}
+library(ggplot2)
+library(gridExtra)
+```
+
+
 ```{r Exercicio 1}
 a <- 0
 b <- 0.11
@@ -13,17 +19,14 @@ print(a,digits = 20)
 ```
 
 ```{r Exercicio 2,Newton-Raphson}
-f <- function(x){
-  return(x^3-9*x+3)
-}
+f <- function(x) x^3-9*x+3
 
-df <- function(x){
-  return(3*x^2-9)
-}
+df <- function(x) 3*x^2-9
 
 x <- 0.5
 e1 <- e2 <- 1 * 10^-4
 i <- 1
+x_vector <- c(x)
 
 newton <- function(x,e1,e2){
   xk <- x - f(x)/df(x)
@@ -31,19 +34,40 @@ newton <- function(x,e1,e2){
     i <- i + 1
     x <- xk
     xk <- x - f(x)/df(x)
+    x_vector <<- c(x_vector,xk)
   }
   resultado <- c(xk,f(xk),i)
   return(resultado)
 }
+newton(x,e1,e2)
+```
+
+```{r}
+data <- data.frame(
+  x_vector = x_vector,
+  fx_vector = f(x_vector),
+  dfx_vector = df(x_vector)
+)
+
+plot <- ggplot(data, aes(x = x_vector, y = fx_vector)) +
+  geom_segment(aes(xend = x_vector + 0.5, yend = fx_vector + dfx_vector * 0.5), color = "red") +  # Plot tangent lines
+  geom_segment(aes(xend = x_vector - 0.5, yend = fx_vector - dfx_vector * 0.5), color = "red") +  # Plot tangent lines
+  geom_point(color = "blue") +  # Plot points for f(x)
+  labs(x = "x", y = "f(x)") +  # Add axis labels
+  theme_minimal()+# Set a minimal theme
+  geom_function(fun=f,color = "green", size = 0.5)+
+  xlim(0,1)+
+  geom_hline(yintercept = 0, color = "black", size = 1)  # Add a black horizontal line at y = 0
+
+plot
 ```
 
 ```{r Exercicio 2,Secante}
-f <- function(x){
-  return(x^3-9*x+3)
-}
+f <- function(x) x^3-9*x+3
 
 x0 <-0
 x1 <-1
+x_vector <- c(x0,x1)
 e1 <- e2 <- 5 * 10^-4
 i <- 0
 
@@ -51,11 +75,39 @@ secante <- function(x0,x1,e1,e2){
   while(abs(f(x1))>=e1 & abs(x1-x0)/abs(x1)>=e2){
     i <- i + 1
     xt <- x1 - f(x1)*(x1-x0)/(f(x1) - f(x0))
+    x_vector <<- c(x_vector,xt)
     x0 <- x1
     x1 <- xt
   }
   resposta <- c(x1,f(x1),i)
   return(resposta)
 }
+
+secante(x0,x1,e1,e2)
 ```
+
+```{r}
+data <- data.frame(
+  x_vector = x_vector,
+  fx_vector = f(x_vector)
+)
+
+plot <-
+  ggplot(data, aes(x = x_vector, y = fx_vector)) +
+  geom_point(color = "blue") +  # Plot points
+  geom_line(color = "blue",size = 1) +# Connect points with lines
+  geom_text(aes(label = seq_along(x_vector)-1), vjust = -0.5, hjust = 0.5, size = 3) +
+  geom_segment(aes(xend = lag(x_vector), yend = lag(fx_vector)), color = "red") +  # Plot secant lines
+  labs(x = "x", y = "f(x)") +  # Labels and title
+  theme_minimal()+# Set a minimal theme
+  geom_function(fun=f,color = "green", size = 0.5)+
+  geom_hline(yintercept = 0, color = "black", size = 1)+
+  xlim(-0.5,3.5)# Add a black horizontal line at y = 0
+
+options(repr.plot.width = 18, repr.plot.height = 16)
+
+plot
+```
+
+
 
