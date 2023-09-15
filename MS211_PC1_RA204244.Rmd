@@ -4,6 +4,8 @@ output: pdf_notebook
 ---
 
 ```{r}
+install.packages("pracma")
+library(pracma)
 library(ggplot2)
 library(gridExtra)
 ```
@@ -30,11 +32,13 @@ x_vector <- c(x)
 
 newton <- function(x,e1,e2){
   xk <- x - f(x)/df(x)
+  x_vector <<- c(x_vector,xk)
   while(abs(f(xk))>=e1 & abs(xk-x)/abs(xk)>=e2){
     i <- i + 1
     x <- xk
     xk <- x - f(x)/df(x)
     x_vector <<- c(x_vector,xk)
+    
   }
   resultado <- c(xk,f(xk),i)
   return(resultado)
@@ -56,7 +60,7 @@ plot <- ggplot(data, aes(x = x_vector, y = fx_vector)) +
   labs(x = "x", y = "f(x)") +  # Add axis labels
   theme_minimal()+# Set a minimal theme
   geom_function(fun=f,color = "green", size = 0.5)+
-  xlim(0,1)+
+  xlim(-10,10)+
   geom_hline(yintercept = 0, color = "black", size = 1)  # Add a black horizontal line at y = 0
 
 plot
@@ -109,5 +113,23 @@ options(repr.plot.width = 18, repr.plot.height = 16)
 plot
 ```
 
+```{r Exercicio 3, Eliminação de Gauss}
+
+sistema <- t(cbind(c(2,2,1,1,7),c(1,-1,2,-1,1),c(3,2,-3,-2,4),c(4,3,2,1,12)))
+
+Eliminacao_Gaus <- function(sistema){
+  for(i in 1:(length(sistema[,1])-1)){
+    if(sistema[i,i] == 0){
+      break
+    }
+    for(j in 1:(length(sistema[,1])-i)){
+      print(j+i)
+      print(j)
+      sistema[i+j,] <- sistema[i+j,] - sistema[i,]*sistema[i+j,i]/sistema[i,i]
+    }
+  }
+  print(sistema)
+}
+```
 
 
