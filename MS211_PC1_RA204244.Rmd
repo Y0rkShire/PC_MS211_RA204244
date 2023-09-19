@@ -117,19 +117,45 @@ plot
 
 sistema <- t(cbind(c(2,2,1,1,7),c(1,-1,2,-1,1),c(3,2,-3,-2,4),c(4,3,2,1,12)))
 
+vetor_solu <- function(sistema){
+  for (i in 1:length(sistema[,1])){
+    sistema[i,] <- sistema[i,]*(1/sistema[i,i])
+  }
+  for (k in length(sistema[,1]):1){
+    for (j in 1:length(sistema[,1])){
+      if( j != k){
+        sistema[j,] <- sistema[j,]-sistema[k,]*sistema[j,k]
+      }
+    }
+  }
+  return(sistema[,ncol(sistema)])
+}
+
 Eliminacao_Gaus <- function(sistema){
   for(i in 1:(length(sistema[,1])-1)){
     if(sistema[i,i] == 0){
       break
     }
     for(j in 1:(length(sistema[,1])-i)){
-      print(j+i)
-      print(j)
       sistema[i+j,] <- sistema[i+j,] - sistema[i,]*sistema[i+j,i]/sistema[i,i]
     }
   }
-  print(sistema)
+  print(vetor_solu(sistema))
 }
+
+
+criar_b <- function(n){
+  b <- numeric(n)
+  for (i in 1:n){
+    soma <- 0
+    for(j in 1:n){
+      soma <- soma + 1/(i+j-1)
+    }
+    b[i] <- soma
+  } 
+  return(cbind(hilb(n),b))
+}
+
 ```
 
 
