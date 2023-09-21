@@ -1,10 +1,10 @@
 ---
 title: "MS211_PC1_RA204244"
-output: pdf_notebook
+output: pdf_document
+date: '2023-09-19'
 ---
 
 ```{r}
-install.packages("pracma")
 library(pracma)
 library(ggplot2)
 library(gridExtra)
@@ -158,4 +158,26 @@ criar_b <- function(n){
 
 ```
 
+```{r Guass Jacobi}
+gauss_jacobi <- function(A, tol, max_iter) {
+  b <- A[,ncol(A)]
+  A <- A[,-ncol(A)]
+  n <- nrow(A)
+  x <- rep(0, n)
+  media <- c()
+  x_new <- numeric(n)
+  
+  for (iter in 1:max_iter) {
+    for (i in 1:n) {
+      x_new[i] <- (b[i] - sum(A[i, -i] * x[-i])) / A[i, i]
+    }
+    if (max(abs(x_new - x)) < tol) {
+      return(x_new)
+    }
+    media <- c(media,x_new)
+    x <- x_new
+  }
+  return(x)
+}
+```
 
